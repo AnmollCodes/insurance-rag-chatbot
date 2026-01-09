@@ -34,26 +34,41 @@ def embed_query(query: str) -> np.ndarray:
         faiss.normalize_L2(vec)
         return vec
 
-def retrieve(query: str, index, chunks: list[str], k: int = 4) -> list[str]:
+def retrieve(query: str, index: faiss.IndexFlatL2, chunks: list[str], k: int = 4) -> list[str]:
+    """
+    Retrieve the most relevant textual chunks for a given query using FAISS.
+
+    Args:
+        query (str): The user's input question.
+        index (faiss.IndexFlatL2): The loaded FAISS vector index.
+        chunks (list[str]): The corresponding text chunks source.
+        k (int): Number of chunks to retrieve.
+
+    Returns:
+        list[str]: A list of the top k matching text chunks.
+    """
     # Check index dimension match
     if index.d != 768:
-        print(f"Warning: Index dimension {index.d} usually mismatch for Gemini (768). Re-ingest might be needed.")
+        print(f"Warning: Index dimension {index.d} mismatch (expected 768). Re-ingestion recommended.")
     
     qvec = embed_query(query)
     # Check dimension match before search to avoid crash
     if qvec.shape[1] != index.d:
-        # Resize or pad? For now just mock return to prevent crash if old index exists
-        print("Dimension mismatch! Please Re-Ingest.")
+        print("CRITICAL: Dimension mismatch! Index requires rebuild.")
         return chunks[:k] if chunks else []
         
     scores, ids = index.search(qvec, k)
     results = []
-    for i in ids[0]:
-        if i == -1:
-            continue
-        # Bounds check
-        if i < len(chunks):
-            results.append(chunks[i])
+    
+    # Process results safely
+    if ids.size > 0:
+        for i in ids[0]:
+            if i == -1:
+                continue
+            # Bounds check
+            if i < len(chunks):
+                results.append(chunks[i])
+    
     return results
 
 def generate_answer(user_question: str, retrieved_chunks: list[str], history: list[dict] = []) -> str:
