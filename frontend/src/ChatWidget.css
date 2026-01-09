@@ -22,18 +22,19 @@
   position: fixed;
   right: 18px;
   bottom: 80px;
-  width: 350px;
-  height: 480px;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  width: 360px;
+  height: 520px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   font-family: 'Inter', system-ui, sans-serif;
   z-index: 1000;
-  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideIn {
