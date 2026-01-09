@@ -114,7 +114,6 @@ Visit `http://localhost:5173` to interact with the chatbot!
 
 <p align="center">
   <img src="screenshots/landing_page.png" alt="Landing Page" width="45%">
-  <img src="screenshots/chat_response.png" alt="Chat Interaction" width="45%">
 </p>
 
 ## 📂 Project Structure
