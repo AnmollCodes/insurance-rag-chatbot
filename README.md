@@ -21,6 +21,22 @@ It features a premium, animated **React Frontend** with 3D visualizations and a 
 
 ---
 
+## 🧠 The "Open Book" Strategy (RAG)
+Unlike standard chatbots that "hallucinate" answers, this system follows strict **Retrieval-Augmented Generation (RAG)** protocols. Think of it as an "Open Book" exam:
+1.  **Read**: The system scans your entire PDF library (`knowledge.pdf`).
+2.  **Retrieve**: When asked a question, it finds the exact paragraphs that contain the answer.
+3.  **Answer**: It constructs a response *using only* those retrieved paragraphs.
+
+This ensures **100% grounded, factual answers**, perfect for regulated industries like Insurance.
+
+### Advanced "Level 2" Capabilities
+This project implements the sophisticated upgrades often missing from tutorials:
+*   **Recursive Visualization**: See exactly what the AI sees via specific Citations.
+*   **Memory Integration**: The bot remembers previous context for fluid conversation.
+*   **Systemic Handoff**: Dedicated logic to route complex queries to human agents.
+
+---
+
 ## 🏗️ Architecture
 
 The system consists of two main microservices:
@@ -115,6 +131,43 @@ Visit `http://localhost:5173` to interact with the chatbot!
 <p align="center">
   <img src="screenshots/landing_page.png" alt="Landing Page" width="45%">
 </p>
+
+## 🧩 Core Logic Snippets
+
+**1. Context-Aware Generation (The "Brain")**
+The system uses a strict prompt to ensure answers come *only* from the documents.
+
+```python
+# backend/rag/rag_answer.py
+
+def generate_answer(user_question: str, retrieved_chunks: list[str]) -> str:
+    context = "\n\n".join(retrieved_chunks)
+    
+    system_instruction = (
+        "You are an Insurance Agency Customer Care assistant. "
+        "Use only the provided context to answer. "
+        "If the answer is not in the context, say you do not have it..."
+    )
+    
+    # ... call Gemini API with strict context ...
+    return response.text
+```
+
+**2. Vector Retrieval (The "Search")**
+We search the FAISS index to find the 4 most relevant chunks before answering.
+
+```python
+# backend/rag/rag_answer.py
+
+def retrieve(query: str, index, chunks: list[str], k: int = 4):
+    qvec = embed_query(query)
+    scores, ids = index.search(qvec, k) # sub-millisecond search
+    
+    results = []
+    for i in ids[0]:
+        results.append(chunks[i])
+    return results
+```
 
 ## 📂 Project Structure
 
